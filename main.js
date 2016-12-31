@@ -15,6 +15,7 @@ http.createServer(function(request, response){
 		return
 	}
 	var spawned_one = spawn(routes[request.headers.host], [data_type_boundary, request.url, request.method, JSON.stringify(request.headers)])
+
 	/* handling process input */
 	request.on('data', function(chunk){
 		spawned_one.stdin.write(chunk)
@@ -22,6 +23,7 @@ http.createServer(function(request, response){
 	request.on('end', function(){
 		spawned_one.stdin.end()
 	})
+
 	/* handling process output */
 	var the_output = ''
 	var headers_sent = false
@@ -52,12 +54,14 @@ http.createServer(function(request, response){
 	spawned_one.stdout.on('data', function(data){
 		the_output += data
 	})
-	spawned_one.stderr.on('data', function(data){
-		response.write(data)
-	})
 	spawned_one.stdout.on('close', function(){
 		process_done_with_sending_output = true
 		spawned_one.stdout.end()
+	})
+
+	/* other important events */
+	spawned_one.stderr.on('data', function(data){
+		response.write(data)
 	})
 	spawned_one.on('close', function(code){
 		spawned_one.kill()

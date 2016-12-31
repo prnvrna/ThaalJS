@@ -2,17 +2,13 @@
 
 <?php
 # getting data from stdin (be sure to apply limit here)
-$thaaljs = call_user_func(function(){
-	global $argv;
-	$to_return = array(
-		'delimeter' => $argv[1],
-		'url' => $argv[2],
-		'method' => $argv[3],
-		'headers' => json_decode($argv[4], true),
-		'current_directory_path' => dirname(getcwd().substr($argv[0], 1))
-	);
-	return $to_return;
-});
+$thaaljs = array(
+	'delimeter' => $argv[1],
+	'url' => $argv[2],
+	'method' => $argv[3],
+	'headers' => json_decode($argv[4], true),
+	'current_directory_path' => dirname(getcwd().substr($argv[0], 1))
+);
 # errors/exceptions handling
 function catchall_exceptions($exception){
 	global $thaaljs;
