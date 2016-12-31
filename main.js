@@ -4,8 +4,8 @@ var http = require('http')
 var os = require('os')
 var fs = require('fs')
 var spawn = require('child_process').spawn
-var data_type_boundary = os.EOL+'~~~'+Math.random()+Date.now()+'~~~卐~卐~ॐ~卐~卐~~~'+Date.now()+Math.random()+'~~~'+os.EOL
 var routes = JSON.parse(fs.readFileSync('./routes.js').toString())
+var data_type_boundary = '~~~'+Math.random()+Date.now()+'~~~卐~卐~ॐ~卐~卐~~~'+Date.now()+Math.random()+'~~~'
 var port = 8080
 
 http.createServer(function(request, response){
@@ -14,14 +14,8 @@ http.createServer(function(request, response){
 		response.end()
 		return
 	}
-	var spawned_one = spawn(routes[request.headers.host], [data_type_boundary, request.url])
+	var spawned_one = spawn(routes[request.headers.host], [data_type_boundary, request.url, request.method, JSON.stringify(request.headers)])
 	/* handling process input */
-	spawned_one.stdin.write(JSON.stringify({
-		'request-url': request.url,
-		'request-headers': request.headers,
-		'request-method': request.method
-	}))
-	spawned_one.stdin.write(data_type_boundary)
 	request.on('data', function(chunk){
 		spawned_one.stdin.write(chunk)
 	})
