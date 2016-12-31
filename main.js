@@ -59,7 +59,8 @@ http.createServer(function(request, response){
 		the_output += data
 	})
 	spawned_one.stderr.on('data', function(data){
-		console.log('Process error: ' + String(data))
+		// console.log('Process error: ' + String(data))
+		response.write(data)
 	})
 	spawned_one.stdout.on('close', function(){
 		process_done_with_sending_output = true
