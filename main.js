@@ -14,7 +14,7 @@ http.createServer(function(request, response){
 		response.end()
 		return
 	}
-	var spawned_one = spawn(routes[request.headers.host], [data_type_boundary])
+	var spawned_one = spawn(routes[request.headers.host], [data_type_boundary, request.url])
 	/* handling process input */
 	spawned_one.stdin.write(JSON.stringify({
 		'request-url': request.url,

@@ -5,19 +5,10 @@
 $thaaljs = call_user_func(function(){
 	global $argv;
 	$to_return = array(
-		'headers' => array(),
-		'body' => '',
 		'delimeter' => $argv[1],
+		'url' => $argv[2],
 		'current_directory_path' => dirname(getcwd().substr($argv[0], 1))
 	);
-	# setting request headers and request body
-	$input_from_stdin = '';
-	$file = fopen('php://stdin', 'r');
-	while($line = fgets($file)) $input_from_stdin .= $line;
-	fclose($file);
-	$tmp_request_data = explode($argv[1], $input_from_stdin, 2);
-	$to_return['headers'] = json_decode($tmp_request_data[0], true);
-	$to_return['body'] = $tmp_request_data[1]; # well, in many cases, this might have to be further broken like in case of form datas (they have their own data separators)
 	return $to_return;
 });
 # errors/exceptions handling
@@ -26,8 +17,8 @@ function catchall_exceptions($exception){
 	try{
 		echo 500, PHP_EOL;
 		echo 'Content-Type: text/html; charset=utf-8', PHP_EOL;
-		echo $thaaljs['delimeter']; # this is it for headers, here comes our delimeter to separate headers from body
-		echo $exception->getMessage();
+		echo $thaaljs['delimeter'];
+		echo '<pre>', print_r($exception, true), '</pre>';
 	}catch(Exception $ex){
 		exit(1); # if still an error occurs, we just bail
 	}
@@ -38,7 +29,8 @@ set_error_handler(function($error_number, $error_string, $error_file, $error_lin
 }, E_ALL);
 
 # passing request to the applicable handler
-$handler = str_replace(array('/', '\\'), '-', $thaaljs['headers']['request-url']);
+$handler = str_replace(array('/', '\\'), '-', $thaaljs['url']);
+if(strpos($handler, '?') !== false) $handler = explode('?', $handler)[0];
 if(substr($handler, 0, 1) == '-') $handler = substr($handler, 1);
 if(substr($handler, -1) == '-') $handler = substr($handler, 0, -1);
 $handler = $thaaljs['current_directory_path'].DIRECTORY_SEPARATOR.'handlers'.DIRECTORY_SEPARATOR.$handler.'.php';
