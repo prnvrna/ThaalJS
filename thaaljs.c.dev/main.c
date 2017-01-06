@@ -2,7 +2,7 @@
 #define BLOCK_SIZE 512
 
 void deal_with_it(){
-	printf("I will be writing content back to the server");
+	printf("ello planet earth !");
 }
 
 // our main function
