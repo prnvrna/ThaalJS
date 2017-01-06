@@ -14,5 +14,5 @@ fn main(){
 }
 
 fn ello(){
-	print!("~~~卐~卐~ॐ~卐~卐~~~");
+	print!("ello planet earth ! I am Rust (^ᴗ^) will you be my friend !");
 }
