@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # including our functions
-. "$(basename $(dirname $0))/functions.sh"
+source "$(basename $(dirname $0))/functions.sh"
 # handling execution
 print_header $1 # passing delimeter to the function
 # examples
