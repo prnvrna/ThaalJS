@@ -17,3 +17,5 @@ print_header $1 # passing delimeter to the function
 ##print_color_code_from_rgb_to_hex 0 0 0
 ##print_flush_example_one
 ##print_flush_example_two
+##echo $(store_printf_output_to_a_variable)
+##print_intros_using_single_printf

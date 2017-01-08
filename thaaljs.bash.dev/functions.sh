@@ -47,3 +47,16 @@ function print_flush_example_one {
 function print_flush_example_two {
 	printf "%04d\n" 12 23 56 123 255 2121
 }
+
+function store_printf_output_to_a_variable {
+	local myintro
+	printf -v myintro "%s, my name is %s" "Namaste" "Pranav Rana"
+	echo $myintro
+}
+
+function print_intros_using_single_printf {
+	# printf "%s, my name is %s\n" "Namaste" "Pranav Rana" "Ello" "Rana Pranav"
+	printf "%s, my name is %s\n" \
+		"Namaste" "Pranav Rana" \
+		"Ello" "Rana Pranav"
+}
