@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang='{{language_code}}'>
+	<head>
+		<meta charset='{{meta_charset}}' />
+		<link rel='shortcut icon' type='image/x-icon' href='{{cdn_url}}favicon.ico' />
+		<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+		<meta name='viewport' content='width=device-width, initial-scale=1' />
+		<title>{{page-title}}</title>
+		<style type='text/css'>
+			body{
+				direction: {{lang.text-direction}};
+			}
+		</style>
+		<link rel='stylesheet' href='//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css' />
+		<link rel='stylesheet' href='{{cdn_url}}sanitize.css' />
+		<link rel='stylesheet' href='{{cdn_url}}dir-page.css' />
+		<script src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js'></script>
+	</head>
+	<body>
+		<h2>Available scripts</h2>
+		<div>{{#data}}<a href="{{fileurl}}">{{filename}}</a>{{/data}}</div>
+	</body>
+</html>
