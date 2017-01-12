@@ -10,15 +10,18 @@ $thaaljs = array(
 	'basepath' => dirname(getcwd().substr($argv[0], 1)),
 	'language_code' => 'en',
 	'charset' => 'utf-8',
-	'cdn_url' => '//cdn.thaaljs.dev/thaaljs.php.dev/'
+	'cdn_url' => '//cdn.thaaljs.dev/thaaljs.php.dev/',
+	'headers_sent' => false
 );
 # errors/exceptions handling
 function catchall_exceptions($exception){
 	global $thaaljs;
 	try{
-		echo 500, PHP_EOL;
-		echo 'Content-Type: text/html; charset=utf-8', PHP_EOL;
-		echo $thaaljs['delimeter'];
+		if(!$thaaljs['headers_sent']){
+			echo 500, PHP_EOL;
+			echo 'Content-Type: text/html; charset=utf-8', PHP_EOL;
+			echo $thaaljs['delimeter'];
+		}
 		echo '<pre>', print_r($exception, true), '</pre>';
 	}catch(Exception $ex){
 		exit(1); # if still an error occurs, we just bail

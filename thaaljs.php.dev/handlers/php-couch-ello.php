@@ -6,6 +6,7 @@ $request_body = file_get_contents('php://stdin');
 echo 200, PHP_EOL;
 echo 'Content-Type: text/html; charset=utf-8', PHP_EOL;
 echo $thaaljs['delimeter'];
+$thaaljs['headers_sent'] = true;
 
 # all further prints would be the response body
 ## properties
@@ -84,4 +85,129 @@ if(!isset($db_deletion_status['ok']) || $db_deletion_status['ok'] !== true){ # f
 }*/
 
 ## past this point, we can be assured that our database exists, so lets create our json document record
-// code goes here
+### lets ask couchdb for a UUID for our new record (it is gurranted to get a unique id everytime)
+/*$command = '/'.'_uuids'; # this is the command to get unique id from couchdb
+$channel = curl_init();
+curl_setopt($channel, CURLOPT_URL, $couchdb['address'].$command);
+curl_setopt($channel, CURLOPT_CUSTOMREQUEST, 'GET');
+curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
+$uuid_for_document_creation = curl_exec($channel);
+curl_close($channel);
+$uuid_for_document_creation = json_decode($uuid_for_document_creation, true); # converting to array*/
+# now lets create a sample document
+$document_name = 'sholay';
+$document_data = json_encode([ # this is the document that we are going to create
+  'actors' => [
+    'Jai',
+    'Veeru',
+    'Basanti',
+    'Jaya',
+    'Jailer',
+    'Gabbar Singh',
+    'Thaakur',
+    'Ramu Kaka'
+  ]
+]);
+# lets insert this document in our db
+$command = '/'.$couchdb['db'].'/'.$document_name;
+$channel = curl_init();
+curl_setopt($channel, CURLOPT_URL, $couchdb['address'].$command);
+curl_setopt($channel, CURLOPT_CUSTOMREQUEST, 'PUT');
+curl_setopt($channel, CURLOPT_POSTFIELDS, $document_data);
+curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
+$document_creation_status = curl_exec($channel);
+curl_close($channel);
+$document_creation_status = json_decode($document_creation_status, true);
+if(isset($document_creation_status['ok']) && $document_creation_status['ok'] === true){ # document successfully created
+  # all good
+}else{ # some error occurred
+  echo 'Some problem occurred while creating the document';
+  print_r($document_creation_status);
+  exit(1);
+}
+
+## now getting our created document
+$document_name = 'sholay';
+$command = '/'.$couchdb['db'].'/'.$document_name;
+$channel = curl_init();
+curl_setopt($channel, CURLOPT_URL, $couchdb['address'].$command);
+curl_setopt($channel, CURLOPT_CUSTOMREQUEST, 'GET');
+curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
+$document_read_status = curl_exec($channel);
+curl_close($channel);
+$document_read_status = json_decode($document_read_status, true);
+if(isset($document_read_status['_id']) && isset($document_read_status['_rev'])){ # document successfully read
+  echo '<pre>', json_encode($document_read_status, JSON_PRETTY_PRINT), '</pre>';
+}else{ # some error occurred
+  echo 'Some problem occurred while reading the document';
+  print_r($document_read_status);
+  exit(1);
+}
+
+## lets update our existing document
+$document_data = json_encode([ # this is the document that we are going to create
+  '_rev' => $document_read_status['_rev'], # this is a required field when updating
+  'actors' => [
+    'Jai',
+    'Veeru',
+    'Basanti',
+    'Jaya',
+    'Jailer',
+    'Gabbar Singh',
+    'Thaakur',
+    'Ramu Kaka',
+    'Haath' # this is the new entry
+  ]
+]);
+$command = '/'.$couchdb['db'].'/'.$document_name;
+$channel = curl_init();
+curl_setopt($channel, CURLOPT_URL, $couchdb['address'].$command);
+curl_setopt($channel, CURLOPT_CUSTOMREQUEST, 'PUT');
+curl_setopt($channel, CURLOPT_POSTFIELDS, $document_data);
+curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
+$document_creation_status = curl_exec($channel);
+curl_close($channel);
+$document_updation_status = json_decode($document_creation_status, true);
+if(isset($document_updation_status['ok']) && $document_updation_status['ok'] === true){ # document successfully updated
+  # all good
+}else{ # some error occurred
+  echo 'Some problem occurred while updating the document';
+  print_r($document_updation_status);
+  exit(1);
+}
+
+## now getting our created document to see if our changes show up
+$document_name = 'sholay';
+$command = '/'.$couchdb['db'].'/'.$document_name;
+$channel = curl_init();
+curl_setopt($channel, CURLOPT_URL, $couchdb['address'].$command);
+curl_setopt($channel, CURLOPT_CUSTOMREQUEST, 'GET');
+curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
+$document_reread_status = curl_exec($channel);
+curl_close($channel);
+$document_reread_status = json_decode($document_reread_status, true);
+if(isset($document_reread_status['_id']) && isset($document_reread_status['_rev'])){ # document successfully read
+  echo '<pre>', json_encode($document_reread_status, JSON_PRETTY_PRINT), '</pre>';
+}else{ # some error occurred
+  echo 'Some problem occurred while reading the document';
+  print_r($document_reread_status);
+  exit(1);
+}
+
+## now lets try deleting our document
+$command = '/'.$couchdb['db'].'/'.$document_name.'?rev='.$document_reread_status['_rev'];
+$channel = curl_init();
+curl_setopt($channel, CURLOPT_URL, $couchdb['address'].$command);
+curl_setopt($channel, CURLOPT_CUSTOMREQUEST, 'DELETE');
+curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
+$document_deletion_status = curl_exec($channel);
+curl_close($channel);
+$document_deletion_status = json_decode($document_deletion_status, true);
+if(isset($document_deletion_status['ok']) && $document_deletion_status['ok'] === true){ # document successfully deleted
+  echo 'Document successfully deleted.';
+  print_r($document_deletion_status);
+}else{ # some error occurred
+  echo 'Some problem occurred while deleting the document';
+  print_r($document_deletion_status);
+  exit(1);
+}

@@ -60,8 +60,12 @@ http.createServer(function(request, response){
 	})
 
 	/* other important events */
+	var the_error_output = ''
 	spawned_one.stderr.on('data', function(data){
-		response.write(data)
+		the_error_output += data
+	})
+	spawned_one.stderr.on('close', function(){
+		if(the_error_output != '') response.end(the_error_output)
 	})
 	spawned_one.on('close', function(code){
 		spawned_one.kill()
