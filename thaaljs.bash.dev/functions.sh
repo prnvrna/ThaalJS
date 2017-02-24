@@ -5,7 +5,7 @@ function print_header {
 }
 
 function say_ello {
-	printf "%s\n" "ello planet earth!"
+	printf "%s\n" "ello earthlings!"
 }
 
 function print_general_info {

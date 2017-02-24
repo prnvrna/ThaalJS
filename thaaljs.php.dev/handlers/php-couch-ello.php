@@ -28,7 +28,7 @@ if(is_null($status)){ # couchdb is not running
 }
 
 ## getting a list of available databases
-$command = '/_all_dbs'; # this gives us the list of all the DBs
+/*$command = '/_all_dbs'; # this gives us the list of all the DBs
 $channel = curl_init();
 curl_setopt($channel, CURLOPT_URL, $couchdb['address'].$command);
 curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
@@ -38,10 +38,10 @@ $databases = json_decode($databases, true); # converting to array
 if(is_null($databases)){ # we have our result set
   echo 'Some problem occurred while retrieving the list of databases';
   exit(1);
-}
+}*/
 
 ## creating our database if it does not exist
-if(!in_array($couchdb['db'], $databases)){ # we don't have our database, lets create it
+/*if(!in_array($couchdb['db'], $databases)){ # we don't have our database, lets create it
   $command = '/'.$couchdb['db']; # this will be the name of our database
   $channel = curl_init();
   curl_setopt($channel, CURLOPT_URL, $couchdb['address'].$command);
@@ -54,10 +54,10 @@ if(!in_array($couchdb['db'], $databases)){ # we don't have our database, lets cr
     echo 'Some problem occurred while creating the database';
     exit(1);
   }
-}
+}*/
 
 ## lets be double sure that our database exists (lets retry creating our database, it should probably return an error)
-$command = '/'.$couchdb['db']; # this will be the name of our database
+/*$command = '/'.$couchdb['db']; # this will be the name of our database
 $channel = curl_init();
 curl_setopt($channel, CURLOPT_URL, $couchdb['address'].$command);
 curl_setopt($channel, CURLOPT_CUSTOMREQUEST, 'PUT'); # it has to be a 'PUT' request to create the database
@@ -68,7 +68,7 @@ $db_recreation_status = json_decode($db_recreation_status, true); # converting t
 if(!isset($db_recreation_status['error']) || $db_recreation_status['error'] != 'file_exists'){ # database with this name already exists
   echo 'Looks like the database does not exist';
   exit(1);
-}
+}*/
 
 ## code for deletion of database
 /*$command = '/'.$couchdb['db']; # this will be the name of our database
@@ -95,7 +95,7 @@ $uuid_for_document_creation = curl_exec($channel);
 curl_close($channel);
 $uuid_for_document_creation = json_decode($uuid_for_document_creation, true); # converting to array*/
 # now lets create a sample document
-$document_name = 'sholay';
+/*$document_name = 'sholay';
 $document_data = json_encode([ # this is the document that we are going to create
   'actors' => [
     'Jai',
@@ -124,7 +124,7 @@ if(isset($document_creation_status['ok']) && $document_creation_status['ok'] ===
   echo 'Some problem occurred while creating the document';
   print_r($document_creation_status);
   exit(1);
-}
+}*/
 
 ## now getting our created document
 $document_name = 'sholay';
@@ -145,7 +145,7 @@ if(isset($document_read_status['_id']) && isset($document_read_status['_rev'])){
 }
 
 ## lets update our existing document
-$document_data = json_encode([ # this is the document that we are going to create
+/*$document_data = json_encode([ # this is the document that we are going to create
   '_rev' => $document_read_status['_rev'], # this is a required field when updating
   'actors' => [
     'Jai',
@@ -174,10 +174,10 @@ if(isset($document_updation_status['ok']) && $document_updation_status['ok'] ===
   echo 'Some problem occurred while updating the document';
   print_r($document_updation_status);
   exit(1);
-}
+}*/
 
 ## now getting our created document to see if our changes show up
-$document_name = 'sholay';
+/*$document_name = 'sholay';
 $command = '/'.$couchdb['db'].'/'.$document_name;
 $channel = curl_init();
 curl_setopt($channel, CURLOPT_URL, $couchdb['address'].$command);
@@ -192,10 +192,10 @@ if(isset($document_reread_status['_id']) && isset($document_reread_status['_rev'
   echo 'Some problem occurred while reading the document';
   print_r($document_reread_status);
   exit(1);
-}
+}*/
 
 ## now lets try deleting our document
-$command = '/'.$couchdb['db'].'/'.$document_name.'?rev='.$document_reread_status['_rev'];
+/*$command = '/'.$couchdb['db'].'/'.$document_name.'?rev='.$document_reread_status['_rev'];
 $channel = curl_init();
 curl_setopt($channel, CURLOPT_URL, $couchdb['address'].$command);
 curl_setopt($channel, CURLOPT_CUSTOMREQUEST, 'DELETE');
@@ -210,4 +210,24 @@ if(isset($document_deletion_status['ok']) && $document_deletion_status['ok'] ===
   echo 'Some problem occurred while deleting the document';
   print_r($document_deletion_status);
   exit(1);
-}
+}*/
+
+## lets add sholay poster to our document
+/*$cover_file_path = '/home/pranav/Desktop/sholay.jpg';
+$command = '/'.$couchdb['db'].'/'.$document_name.'/'.pathinfo($cover_file_path)['basename'].'?rev='.$document_read_status['_rev'];
+$channel = curl_init();
+curl_setopt($channel, CURLOPT_URL, $couchdb['address'].$command);
+curl_setopt($channel, CURLOPT_CUSTOMREQUEST, 'PUT');
+curl_setopt($channel, CURLOPT_HTTPHEADER, array('Content-Type: '.trim(explode(' ', shell_exec('file -bi '.$cover_file_path))[0])));
+curl_setopt($channel, CURLOPT_POSTFIELDS, file_get_contents($cover_file_path));
+curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
+$document_updation_status = curl_exec($channel);
+curl_close($channel);
+$document_updation_status = json_decode($document_updation_status, true);
+if(isset($document_updation_status['ok']) && $document_updation_status['ok'] === true){ # document successfully updated
+  echo 'Mission accomplshed.<br />';
+  print_r($document_updation_status);
+}else{ # some error occurred
+  echo 'Some problem occurred while attaching our cover';
+  print_r($document_updation_status);
+}*/

@@ -5,7 +5,7 @@
 # handling execution
 print_header $1 # passing delimeter to the function
 # examples
-##say_ello
+say_ello
 ##print_as_decimal 0xff
 ##print_as_decimal 011
 ##print_as_exponential 0xff
